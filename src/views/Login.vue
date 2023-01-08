@@ -2,19 +2,36 @@
   <div class="login-body">
     <div class="login-panel">
       <div class="login-title">用户登陆</div>
-      <el-form :model="formData">
-        <el-form-item label="">
-          <el-input v-model="formData.account" placeholder="请输入账号" />
+      <el-form :model="formData" :rules="rules" ref="formDataRef">
+        <el-form-item prop="account">
+          <el-input
+            v-model="formData.account"
+            placeholder="请输入账号"
+            size="large"
+          >
+            <template #prefix>
+              <span class="iconfont icon-account"></span>
+            </template>
+          </el-input>
         </el-form-item>
-        <el-form-item label="">
-          <el-input v-model="formData.password" placeholder="请输入密码" />
+        <el-form-item prop="password">
+          <el-input
+            v-model="formData.password"
+            placeholder="请输入密码"
+            size="large"
+          >
+            <template #prefix>
+              <span class="iconfont icon-mima"></span>
+            </template>
+          </el-input>
         </el-form-item>
-        <el-form-item label="">
+        <el-form-item prop="checkCode">
           <div class="check-code-panel">
             <el-input
               v-model="formData.checkCode"
               placeholder="请输入验证码"
               class="input-panel"
+              size="large"
             />
             <img
               :src="checkCodeUrl"
@@ -30,7 +47,7 @@
           >
         </el-form-item>
         <el-form-item label="">
-          <el-button type="primary" :style="{ width: '100%' }">
+          <el-button type="primary" :style="{ width: '100%' }" @click="login">
             登陆
           </el-button>
         </el-form-item>
@@ -41,10 +58,44 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-const formData = reactive({});
-const checkCodeUrl = ref("api/checkCode?" + new Date().getTime());
+const api = {
+  checkCode: "api/checkCode",
+};
+const checkCodeUrl = ref(api.checkCode);
 const changeCheckCode = () => {
-  checkCodeUrl.value = "api/checkCode?" + new Date().getTime();
+  checkCodeUrl.value = api.checkCode + "?" + new Date().getTime();
+};
+
+//表单相关
+const formDataRef = ref();
+const formData = reactive({});
+const rules = {
+  account: [
+    {
+      required: true,
+      message: "请输入用户名",
+    },
+  ],
+
+  password: [
+    {
+      required: true,
+      message: "请输入密码",
+    },
+  ],
+  checkCode: [
+    {
+      required: true,
+      message: "请输入验证码",
+    },
+  ],
+};
+const login = () => {
+  formDataRef.value.validate((valid) => {
+    if (!valid) {
+      return;
+    }
+  });
 };
 </script>
 
@@ -78,7 +129,6 @@ const changeCheckCode = () => {
         margin-right: 5px;
       }
       .check-code {
-        height: 35px;
         cursor: pointer;
       }
     }
