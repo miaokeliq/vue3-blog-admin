@@ -10,14 +10,14 @@ const message = {
   },
   success: (msg) => {
     ElMessage({
-      message: error,
+      message: msg,
       type: "success",
       duration: 2000,
     });
   },
   warning: (msg) => {
     ElMessage({
-      message: error,
+      message: msg,
       type: "warning",
       duration: 2000,
     });

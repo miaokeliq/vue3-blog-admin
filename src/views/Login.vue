@@ -33,6 +33,7 @@
               placeholder="请输入验证码"
               class="input-panel"
               size="large"
+              @keyup.enter="login"
             />
             <img
               :src="checkCodeUrl"
@@ -59,17 +60,20 @@
 
 <script setup>
 import { ref, reactive, getCurrentInstance } from "vue";
+import VueCookies from "vue-cookies";
 import md5 from "js-md5";
+import { useRouter } from "vue-router";
 const { proxy } = getCurrentInstance();
+const router = useRouter();
 const api = {
   checkCode: "api/checkCode",
   login: "login",
 };
 const checkCodeUrl = ref(api.checkCode);
+console.log(checkCodeUrl);
 const changeCheckCode = () => {
   checkCodeUrl.value = api.checkCode + "?" + new Date().getTime();
 };
-
 //表单相关
 const formDataRef = ref();
 const formData = reactive({});
@@ -94,24 +98,67 @@ const rules = {
     },
   ],
 };
+
+const init = () => {
+  const loginInfo = VueCookies.get("loginInfo");
+  if (!loginInfo) {
+    return;
+  }
+
+  Object.assign(formData, loginInfo);
+  console.log(formData);
+};
+init();
+
 const login = () => {
   formDataRef.value.validate(async (valid) => {
     // console.log(valid); // true or false
     if (!valid) {
       return;
     }
+
+    let cookieLoginInfo = VueCookies.get("loginInfo");
+    let cookiePassword =
+      cookieLoginInfo == null ? null : cookieLoginInfo.password;
+
+    if (formData.password !== cookiePassword) {
+      formData.password = md5(formData.password);
+    }
+
+    let params = {
+      account: formData.account,
+      password: formData.password,
+      checkCode: formData.checkCode,
+      rememberMe: formData.rememberMe,
+    };
     let result = await proxy.Request({
       url: api.login,
-      params: {
-        account: formData.account,
-        password: md5(formData.password),
-        checkCode: formData.checkCode,
-      },
+      params: params,
       errorCallback: () => {
         changeCheckCode();
       },
     });
-    console.log(result);
+    if (!result) {
+      return;
+    }
+
+    proxy.message.success("登陆成功");
+
+    setTimeout(() => {
+      router.push("/");
+    }, 1500);
+
+    const loginInfo = {
+      account: params.account,
+      password: params.password,
+      rememberMe: params.rememberMe,
+    };
+
+    VueCookies.set("userInfo", result.data, 0);
+
+    if (formData.rememberMe) {
+      VueCookies.set("loginInfo", loginInfo, "7D");
+    }
   });
 };
 </script>
