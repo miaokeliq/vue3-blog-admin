@@ -17,6 +17,7 @@
         <el-form-item prop="password">
           <el-input
             v-model="formData.password"
+            type="password"
             placeholder="请输入密码"
             size="large"
           >
@@ -57,9 +58,12 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, getCurrentInstance } from "vue";
+import md5 from "js-md5";
+const { proxy } = getCurrentInstance();
 const api = {
   checkCode: "api/checkCode",
+  login: "login",
 };
 const checkCodeUrl = ref(api.checkCode);
 const changeCheckCode = () => {
@@ -91,10 +95,23 @@ const rules = {
   ],
 };
 const login = () => {
-  formDataRef.value.validate((valid) => {
+  formDataRef.value.validate(async (valid) => {
+    // console.log(valid); // true or false
     if (!valid) {
       return;
     }
+    let result = await proxy.Request({
+      url: api.login,
+      params: {
+        account: formData.account,
+        password: md5(formData.password),
+        checkCode: formData.checkCode,
+      },
+      errorCallback: () => {
+        changeCheckCode();
+      },
+    });
+    console.log(result);
   });
 };
 </script>
