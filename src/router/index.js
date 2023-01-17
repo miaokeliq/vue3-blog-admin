@@ -11,6 +11,18 @@ const routes = [
     name: "框架页",
     path: "/",
     component: () => import("../views/Framework.vue"),
+    children: [
+      {
+        path: "/blog/list",
+        name: "博客管理",
+        component: () => import("../views/blog/Blog.vue"),
+      },
+      {
+        path: "/blog/category",
+        name: "博客分类",
+        component: () => import("../views/blog/BlogCategory.vue"),
+      },
+    ],
   },
 ];
 

@@ -1,7 +1,29 @@
 <template>
   <div class="layout">
     <el-container>
-      <el-header class="header">Header</el-header>
+      <el-header class="header">
+        <div class="logo">EasyBlog</div>
+        <div class="user-info">
+          <span>欢迎回来，</span>
+          <el-dropdown>
+            <span>
+              <span class="nick-name">
+                {{ userInfo.nickName }}
+                <span class="iconfont icon-close"></span>
+              </span>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item>个人信息</el-dropdown-item>
+                <el-dropdown-item>退出</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+          <div class="avatar">
+            <img :src="userInfo.avatar" />
+          </div>
+        </div>
+      </el-header>
       <el-container class="container">
         <el-aside width="200px" class="left-aside">
           <div>
@@ -24,21 +46,35 @@
 
                 <ul class="sub-menu" v-show="menu.open">
                   <li v-for="(subMenu, index) in menu.children" :key="index">
-                    <span class="sub-menu-item">{{ subMenu.title }}</span>
+                    <router-link
+                      :to="subMenu.path"
+                      :class="[
+                        'sub-menu-item',
+                        activePath == subMenu.path ? 'active' : '',
+                      ]"
+                      >{{ subMenu.title }}</router-link
+                    >
                   </li>
                 </ul>
               </li>
             </ul>
           </div>
         </el-aside>
-        <el-main class="right-main">Main</el-main>
+        <el-main class="right-main">
+          <router-view />
+        </el-main>
       </el-container>
     </el-container>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, getCurrentInstance, watch } from "vue";
+import VueCookies from "vue-cookies";
+import { useRouter, useRoute } from "vue-router";
+const router = useRouter();
+const route = useRoute();
+const { proxy } = getCurrentInstance();
 const menuList = ref([
   {
     title: "博客",
@@ -102,12 +138,58 @@ const openClose = (index) => {
   const open = menuList.value[index].open;
   menuList.value[index].open = !open;
 };
+
+const userInfo = ref({});
+
+// 初始化的时候获取用户的cookie信息
+const init = () => {
+  userInfo.value = VueCookies.get("userInfo");
+  userInfo.value.avatar = proxy.globalInfo.imageUrl + userInfo.value.avatar;
+};
+init();
+// 监听路由的变化
+
+const activePath = ref(null);
+
+watch(
+  route,
+  (newVal, oldVal) => {
+    activePath.value = newVal.path;
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <style lang="scss">
 .layout {
   .header {
     border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .logo {
+      font-size: 30px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      .nick-name {
+        cursor: pointer;
+        color: rgb(6, 143, 234);
+
+        .icon-close {
+          font-size: 14px;
+        }
+      }
+      .avatar {
+        margin-left: 10px;
+        width: 50px;
+        img {
+          width: 100%;
+          border-radius: 25px;
+        }
+      }
+    }
   }
   .container {
     background-color: #f5f6f7;
@@ -160,8 +242,13 @@ const openClose = (index) => {
             display: block;
             line-height: 40px;
             cursor: pointer;
+            text-decoration: none;
+            color: #3f4042;
           }
           .sub-menu-item:hover {
+            background-color: #ddd;
+          }
+          .active {
             background-color: #ddd;
           }
         }

@@ -18,4 +18,7 @@ app.use(ElementPlus);
 // 一个用于注册能够被应用内所有组件实例访问到的全局 property 的对象
 app.config.globalProperties.Request = Request;
 app.config.globalProperties.message = message;
+app.config.globalProperties.globalInfo = {
+  imageUrl: "/api/file/getImage/",
+};
 app.mount("#app");
