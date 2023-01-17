@@ -10,11 +10,21 @@
           <div class="menu-panel">
             <ul>
               <li v-for="(menu, index) in menuList" :key="index">
-                <span :class="['iconfont', menu.icon]"></span>
-                <span>{{ menu.title }}</span>
-                <ul>
+                <span class="menu-title-p" @click="openClose(index)">
+                  <span :class="['iconfont', menu.icon]"></span>
+                  <span class="menu-title">{{ menu.title }}</span>
+                  <span
+                    :class="[
+                      'iconfont',
+                      'open-close',
+                      menu.open ? 'icon-close' : 'icon-open',
+                    ]"
+                  ></span>
+                </span>
+
+                <ul class="sub-menu" v-show="menu.open">
                   <li v-for="(subMenu, index) in menu.children" :key="index">
-                    {{ subMenu.title }}
+                    <span class="sub-menu-item">{{ subMenu.title }}</span>
                   </li>
                 </ul>
               </li>
@@ -29,7 +39,7 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-const menuList = reactive([
+const menuList = ref([
   {
     title: "博客",
     icon: "icon-blog",
@@ -87,6 +97,11 @@ const menuList = reactive([
     ],
   },
 ]);
+
+const openClose = (index) => {
+  const open = menuList.value[index].open;
+  menuList.value[index].open = !open;
+};
 </script>
 
 <style lang="scss">
@@ -99,7 +114,7 @@ const menuList = reactive([
     height: calc(100vh - 60px);
     padding-top: 10px;
     .left-aside {
-      width: 250px;
+      width: 280px;
       padding: 0px 15px;
       .post-btn {
         background-color: green;
@@ -108,11 +123,47 @@ const menuList = reactive([
         width: 100%;
       }
       .menu-panel {
+        margin-top: 5px;
         ul,
         li {
           padding: 0px;
           margin: 0px;
           list-style: none;
+        }
+        .menu-title-p {
+          padding: 0px 5px;
+          display: flex;
+          cursor: pointer;
+          line-height: 45px;
+          .iconfont {
+            font-size: 18px;
+            color: #91949a;
+          }
+          .menu-title {
+            flex: 1;
+            color: #3f4042;
+            margin-left: 10px;
+          }
+          .open-close {
+            width: 20px;
+            font-size: 16px;
+          }
+        }
+
+        .menu-title-p:hover {
+          background-color: #ddd;
+        }
+        .sub-menu {
+          font-size: 14px;
+          .sub-menu-item {
+            padding: 0px 10px 0 33px;
+            display: block;
+            line-height: 40px;
+            cursor: pointer;
+          }
+          .sub-menu-item:hover {
+            background-color: #ddd;
+          }
         }
       }
     }
