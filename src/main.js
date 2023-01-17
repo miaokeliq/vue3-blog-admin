@@ -12,6 +12,9 @@ import Request from "@/utils/Request";
 
 // message定义为全局
 import message from "@/utils/Message";
+
+// 引入自己封装的table组件
+import Table from "@/components/Table.vue";
 const app = createApp(App);
 app.use(router);
 app.use(ElementPlus);
@@ -21,4 +24,5 @@ app.config.globalProperties.message = message;
 app.config.globalProperties.globalInfo = {
   imageUrl: "/api/file/getImage/",
 };
+app.component("Table", Table);
 app.mount("#app");

@@ -247,9 +247,11 @@ watch(
           }
           .sub-menu-item:hover {
             background-color: #ddd;
+            color: red;
           }
           .active {
             background-color: #ddd;
+            color: red;
           }
         }
       }

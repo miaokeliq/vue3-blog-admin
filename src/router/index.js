@@ -11,6 +11,8 @@ const routes = [
     name: "框架页",
     path: "/",
     component: () => import("../views/Framework.vue"),
+    //直接跳转到默认的博客列表页面
+    redirect: "/blog/list",
     children: [
       {
         path: "/blog/list",
