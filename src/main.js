@@ -15,6 +15,8 @@ import message from "@/utils/Message";
 
 // 引入自己封装的table组件
 import Table from "@/components/Table.vue";
+// 全局引入图片封面组件
+import Cover from "@/components/Cover.vue";
 const app = createApp(App);
 app.use(router);
 app.use(ElementPlus);
@@ -25,4 +27,6 @@ app.config.globalProperties.globalInfo = {
   imageUrl: "/api/file/getImage/",
 };
 app.component("Table", Table);
+app.component("Cover", Cover);
+
 app.mount("#app");

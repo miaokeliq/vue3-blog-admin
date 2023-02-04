@@ -8,6 +8,20 @@
       :fetch="loadDataList"
       :options="tableOptions"
     >
+      <template #cover="{ index, row }">
+        <Cover :cover="row.cover"></Cover>
+      </template>
+      <template #op="{ index, row }">
+        <div class="op">
+          <a href="javascript:void(0)" class="a-link">修改</a>
+          <el-divider direction="vertical"></el-divider>
+          <a href="javascript:void(0)" class="a-link">删除</a>
+          <el-divider direction="vertical"></el-divider>
+          <a href="javascript:void(0)" class="a-link">上移</a>
+          <el-divider direction="vertical"></el-divider>
+          <a href="javascript:void(0)" class="a-link">下移</a>
+        </div>
+      </template>
     </Table>
   </div>
 </template>
@@ -25,12 +39,13 @@ const columns = [
   {
     label: "封面",
     prop: "cover",
-    width: 80,
+    width: 100,
+    scopedSlots: "cover",
   },
   {
     label: "名称",
     prop: "categoryName",
-    width: 150,
+    width: 200,
   },
   {
     label: "简介",
@@ -39,12 +54,13 @@ const columns = [
   {
     label: "博客数量",
     prop: "blogCount",
-    width: 80,
+    width: 100,
   },
   {
     label: "操作",
-    prop: "blogCount",
-    width: 150,
+    prop: "op",
+    width: 200,
+    scopedSlots: "op",
   },
 ];
 
