@@ -13,7 +13,6 @@ const request = (config) => {
   let { url, params, dataType = "form", showLoading = "true" } = config;
   // header头信息
   let contentType = contentTypeForm;
-
   if (dataType === "json") {
     contentType = contentTypeJson;
   } else if (dataType === "file") {
@@ -23,7 +22,7 @@ const request = (config) => {
     // 上传文件可能还带有额外参数，要把这些额外的参数加进去，最后再把这个文件也加进去
     let param = new FormData();
     for (let key in params) {
-      param.append(key, param);
+      param.append(key, params[key]);
     }
     params = param;
   }

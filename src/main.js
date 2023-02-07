@@ -18,6 +18,7 @@ import Table from "@/components/Table.vue";
 // 全局引入图片封面组件
 import Cover from "@/components/Cover.vue";
 import Dialog from "@/components/Dialog.vue";
+import CoverUpload from "@/components/CoverUpload.vue";
 const app = createApp(App);
 app.use(router);
 app.use(ElementPlus);
@@ -30,4 +31,5 @@ app.config.globalProperties.globalInfo = {
 app.component("Table", Table);
 app.component("Cover", Cover);
 app.component("Dialog", Dialog);
+app.component("CoverUpload", CoverUpload);
 app.mount("#app");

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-button type="danger">新增分类</el-button>
+    <el-button type="danger" @click="showEdit('add')">新增分类</el-button>
     <Table
       :columns="columns"
       :showPagination="false"
@@ -13,7 +13,12 @@
       </template>
       <template #op="{ index, row }">
         <div class="op">
-          <a href="javascript:void(0)" class="a-link">修改</a>
+          <a
+            href="javascript:void(0)"
+            class="a-link"
+            @click="showEdit('update', row)"
+            >修改</a
+          >
           <el-divider direction="vertical"></el-divider>
           <a href="javascript:void(0)" class="a-link">删除</a>
           <el-divider direction="vertical"></el-divider>
@@ -28,8 +33,31 @@
       :buttons="dialogConfig.buttons"
       @close="dialogConfig.show = false"
       :show="dialogConfig.show"
+      width="500px"
     >
-      我是内容
+      <el-form
+        :model="formData"
+        :rules="rules"
+        ref="formDataRef"
+        label-width="80px"
+      >
+        <el-form-item prop="categoryName" label="名称">
+          <el-input v-model="formData.categoryName" placeholder="请输入名称">
+          </el-input>
+        </el-form-item>
+        <el-form-item prop="cover" label="封面">
+          <CoverUpload v-model="formData.cover"></CoverUpload>
+        </el-form-item>
+        <el-form-item prop="checkCode" label="简介">
+          <el-input
+            v-model="formData.categoryDesc"
+            placeholder="简介"
+            type="textarea"
+            :autosize="{ minRows: 4, maxRows: 4 }"
+          >
+          </el-input>
+        </el-form-item>
+      </el-form>
     </Dialog>
   </div>
 </template>
@@ -87,9 +115,10 @@ const loadDataList = async () => {
   tableData.list = result.data;
 };
 
+//新增，修改
 const dialogConfig = reactive({
   title: "标题",
-  show: true,
+  show: false,
   buttons: [
     {
       type: "danger",
@@ -100,6 +129,18 @@ const dialogConfig = reactive({
     },
   ],
 });
+
+const formData = reactive({});
+
+const rules = {};
+
+/*
+    type: 是新增还是修改
+    data: 如果是修改，则指明修改哪个分类
+*/
+const showEdit = (type, data) => {
+  dialogConfig.show = true;
+};
 </script>
 
 <style lang="scss"></style>
